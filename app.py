@@ -6,9 +6,11 @@ import json
 import yaml
 import mysql.connector
 import sql
+import pickle
 
 app = flask.Flask(__name__)
 CLIENT_SECRET_FILE = "client_secrets.json"
+sql.createTables()
 
 @app.route('/', methods=["GET", "POST"])
 def index():
@@ -26,7 +28,7 @@ def index():
 @app.route('/oauth2callback')
 def oauth2callback():
     flow = client.flow_from_clientsecrets('client_secrets.json',
-        scope='https://www.googleapis.com/auth/calendar',
+        scope='https://www.googleapis.com/auth/calendar email',
         redirect_uri=flask.url_for('oauth2callback', _external=True))
     #,include_granted_scopes=True)
     if 'code' not in flask.request.args:
@@ -44,7 +46,7 @@ def auth():
     http_auth = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http_auth)
     creds = yaml.safe_load(credentials.to_json())
-    n = sql.getName(creds["client_id"])
+    n = sql.getName(creds["id_token"]["email"])
     if n == 0:
         return flask.redirect(flask.url_for("register"))
     else:
@@ -56,28 +58,28 @@ def register():
         return flask.render_template("register.html")
     credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
     creds = yaml.safe_load(credentials.to_json())
+    p = pickle.dumps(credentials)
     fname = flask.request.form["fname"]
     lname = flask.request.form["lname"]
-    sql.addName(creds["client_id"], fname, lname)
-    uname = sql.getName(creds["client_id"])
+    sql.addName(creds["id_token"]["email"], fname, lname)
+    uname = sql.getName(creds["id_token"]["email"])
     cpuser = flask.request.form["cpuser"]
     cppw = flask.request.form["cppw"]
     cfuser = flask.request.form["cfuser"]
     cfpw = flask.request.form["cfpw"]
-    sql.addAccount(uname, cpuser, cppw, cfuser, cfpw)
+    sql.addAccount(uname, cpuser, cppw, cfuser, cfpw, p)
     return flask.redirect(flask.url_for("user"))
 
 @app.route("/user")
 def user():
     credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
     creds = yaml.safe_load(credentials.to_json())
-    uname = sql.getName(creds["client_id"])
+    uname = sql.getName(creds["id_token"]["email"])
     fname = uname.split(".")[0]
     lname = uname.split(".")[1]
     return flask.render_template("user.html", fname=fname, lname=lname)
 
 if __name__ == '__main__':
-    sql.createTables()
     import uuid
     app.secret_key = str(uuid.uuid4())
     app.debug = False

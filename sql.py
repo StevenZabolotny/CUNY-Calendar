@@ -29,11 +29,12 @@ def createTables():
             "   cppw varchar(32) NOT NULL,"
             "   cfuser varchar(32) NOT NULL,"
             "   cfpw varchar(32) NOT NULL,"
-               # calendar service
+            "   serv varchar(1024) NOT NULL,"
             "   PRIMARY KEY (uname(, UNIQUE KEY uname (uname)"
             ") ENGINE=InnoDB")
         crs.execute(TABLES["names"])
         crs.execute(TABLES["accounts"])
+        c.commit()
         return True
     except:
         return False
@@ -69,12 +70,20 @@ def getName(client_id):
     except:
         return 0
 
-def addAccount(uname, cpuser, cppw, cfuser, cfpw):
+def addAccount(uname, cpuser, cppw, cfuser, cfpw, serv):
     crs.execute("SELECT * FROM accounts WHERE uname = '" + uname + "'")
     results = crs.fetchall()
     if (len(results) > 0):
         return False
     else:
-        crs.execute("INSERT INTO accounts(uname, cpuser, cppw, cfuser, cfpw) VALUES ('" + uname + "', '" + cpuser + "', '" + cppw + "', '" + cfuser + "', '" + cfpw + "')")
+        crs.execute("INSERT INTO accounts(uname, cpuser, cppw, cfuser, cfpw, serv) VALUES ('" + uname + "', '" + cpuser + "', '" + cppw + "', '" + cfuser + "', '" + cfpw + "', '" + serv + "')")
         c.commit()
         return True
+
+def getCredentials(uname):
+    crs.execute("SELECT * FROM accounts WHERE uname = '" + uname + "'")
+    try:
+        results = crs.fetchall()
+        return [results[3], results[4]]
+    except:
+        return []
