@@ -1,9 +1,19 @@
 <html>
 	<head>
+	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+	<style>
+		img { display: inline-block;
+		vertical-align:bottom;
+			}
+		h1 { font-size: 45px}
+		body { background-color:  #ffcc80
+ }
+		</style>
 	</head>
-	<body>
+	<body><center>
 		<h1>CUNY Calendar</h1>
-		<h3>Welcome, {{fname}} {{lname}}!<br>
+		<h2>Welcome, {{fname}} {{lname}}!<br></h2>
+		<h3>
 		These are your user settings. Here, you can manually request a calendar update,<br>
 		delete all calendar events created by CUNY Calendar, or de-register your account<br>
 		from this website. If you have entered the wrong CUNY log-in information and you<br>
@@ -12,18 +22,18 @@
 
 		<form method="POST">
 			<input type="hidden" name="sub" value="update">
-			<button type="submit" name="update">Update Calendar</button>
+			<button class="pure-button pure-button-primary" type="submit" name="update">Update Calendar</button>
 		</form>
 		<form method="POST">
 			<input type="hidden" name="sub" value="delete">
-			<button type="submit" name="delete">Delete Events</button>
+			<button class="pure-button pure-button-primary" type="submit" name="delete">Delete Events</button>
 		</form>
 		<form method="POST">
 			<input type="hidden" name="sub" value="deregister">
-			<button type="submit" name="dereg">Deregister Account</button>
+			<button class="pure-button pure-button-primary" type="submit" name="dereg">Deregister Account</button>
 		</form>
 		<form method="GET", action="/">
-			<button type="submit" name="logout">Log Out</button
-		</form>
+			<button class="pure-button pure-button-primary" type="submit" name="logout">Log Out</button
+		</form></center>
 	</body>
 </html>

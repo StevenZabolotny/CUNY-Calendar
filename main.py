@@ -32,12 +32,12 @@ def updateCalendar(uname, credentials):
             batch = service.new_batch_http_request(callback=callbackPlaceholder)
             for i in requests:
                 batch.add(i)
-            batch.execute(http=http)
+            batch.execute()
             requests = []
         line = calendar.readline()
     if len(requests) != 0:
         batch = service.new_batch_http_request(callback=callbackPlaceholder)
         for i in requests:
             batch.add(i)
-        batch.execute(http=http)
+        batch.execute()
     return True
