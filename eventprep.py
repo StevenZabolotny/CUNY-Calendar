@@ -19,6 +19,7 @@ def eventPrep(classInfo, dateline):
         hour = int(starttime[:colonloc])
         minute = starttime[colonloc+1:-2]
         zone = 'standard'
+        year = str(year)
         if month < 11 or (month == 11 and date < 6):
             zone = 'day'
         if hour == 12:
@@ -38,9 +39,9 @@ def eventPrep(classInfo, dateline):
         else:
             date = str(date)
         if zone == 'day':
-            start = {'dateTime': year+'-'+month+'-'+day+'T'+hour+':'+minute+':00-04:00', 'timeZone': 'Eastern Daylight Time'}
+            start = {'dateTime': year+'-'+month+'-'+date+'T'+hour+':'+minute+':00-04:00', 'timeZone': 'America/New_York'}
         else:
-            start = {'dateTime': year+'-'+month+'-'+day+'T'+hour+':'+minute+':00-05:00', 'timeZone': 'Eastern Standard Time'}
+            start = {'dateTime': year+'-'+month+'-'+date+'T'+hour+':'+minute+':00-05:00', 'timeZone': 'America/New_York'}
         dashloc = timeport.find('-')
         endtime = timeport[dashloc+2:]
         colonloc = endtime.find(':')
@@ -55,9 +56,9 @@ def eventPrep(classInfo, dateline):
         else:
             hour = str(hour)
         if zone == 'day':
-            end = {'dateTime': year+'-'+month+'-'+day+'T'+hour+':'+minute+':00-04:00', 'timeZone': 'Eastern Daylight Time'}
+            end = {'dateTime': year+'-'+month+'-'+date+'T'+hour+':'+minute+':00-04:00', 'timeZone': 'America/New_York'}
         else:
-            end = {'dateTime': year+'-'+month+'-'+day+'T'+hour+':'+minute+':00-05:00', 'timeZone': 'Eastern Standard Time'}
+            end = {'dateTime': year+'-'+month+'-'+date+'T'+hour+':'+minute+':00-05:00', 'timeZone': 'America/New_York'}
         event = {'summary':summary, 'location':location, 'start':start, 'end':end}
         return event
     else:

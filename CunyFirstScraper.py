@@ -1,6 +1,6 @@
 import requests
 from lxml import html
-
+import sql
 
 def getCredentials(accountID):
     # needs to access database record of accountID and pull username into credentials[0], and password into credentials[1]
@@ -8,7 +8,7 @@ def getCredentials(accountID):
     return credentials
 
 def scrapeCFirst(accountID):
-    credentials = getCredentials(accountID)
+    credentials = sql.getCredentials(accountID)
     session_requests = requests.session()
     login_url = "https://home.cunyfirst.cuny.edu/access/dummy.cgi"
     payload = {"login": "Username", "password": "Password"}

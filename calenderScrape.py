@@ -18,7 +18,7 @@ def scrapeCalender():
             pass
         else:
             dates2.append(i)
-    calenderf = open('calender.txt', 'w')
+    calenderf = open('calendar.txt', 'w')
     finals = 0
     for i in dates2:
         if finals == 1:

@@ -7,10 +7,10 @@ import yaml
 import mysql.connector
 import sql
 import pickle
+import main
 
 app = flask.Flask(__name__)
 CLIENT_SECRET_FILE = "client_secrets.json"
-sql.createTables()
 
 @app.route('/', methods=["GET", "POST"])
 def index():
@@ -43,8 +43,6 @@ def oauth2callback():
 @app.route("/auth")
 def auth():
     credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
-    http_auth = credentials.authorize(httplib2.Http())
-    service = discovery.build('calendar', 'v3', http_auth)
     creds = yaml.safe_load(credentials.to_json())
     n = sql.getName(creds["id_token"]["email"])
     if n == 0:
@@ -58,16 +56,16 @@ def register():
         return flask.render_template("register.html")
     credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
     creds = yaml.safe_load(credentials.to_json())
-    p = pickle.dumps(credentials)
     fname = flask.request.form["fname"]
     lname = flask.request.form["lname"]
     sql.addName(creds["id_token"]["email"], fname, lname)
-    uname = sql.getName(creds["id_token"]["email"])
     cpuser = flask.request.form["cpuser"]
     cppw = flask.request.form["cppw"]
     cfuser = flask.request.form["cfuser"]
     cfpw = flask.request.form["cfpw"]
-    sql.addAccount(uname, cpuser, cppw, cfuser, cfpw, p)
+    check = sql.addAccount(creds["id_token"]["email"], cpuser, cppw, cfuser, cfpw)
+    if check:
+        main.updateCalendar(creds["id_token"]["email"], credentials)
     return flask.redirect(flask.url_for("user"))
 
 @app.route("/user")
@@ -80,6 +78,9 @@ def user():
     return flask.render_template("user.html", fname=fname, lname=lname)
 
 if __name__ == '__main__':
+    sql.dropTables()
+    sql.createNames()
+    sql.createAccounts()
     import uuid
     app.secret_key = str(uuid.uuid4())
     app.debug = False
