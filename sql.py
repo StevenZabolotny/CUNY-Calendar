@@ -82,17 +82,19 @@ def addAccount(uname, cpuser, cppw, cfuser, cfpw):
         return False
     else:
         s = "INSERT INTO accounts(email, cpuser, cppw, cfuser, cfpw) VALUES ('" + uname + "', '" + cpuser + "', '" + cppw + "', '" + cfuser + "', '" + cfpw + "')"
-        print(s)
         crs.execute(s)
         c.commit()
         return True
 
 def getCredentials(uname):
-    print(uname)
     crs.execute("SELECT * FROM accounts WHERE email = '" + uname + "'")
     try:
         results = crs.fetchone()
-        print(results)
         return [results[3], results[4]]
     except:
         return []
+
+def removeAccount(email):
+    crs.execute("DELETE FROM accounts WHERE email = '" + email + "'")
+    crs.execute("DELETE FROM names WHERE email = '" + email + "'")
+    c.commit()

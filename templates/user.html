@@ -3,6 +3,27 @@
 	</head>
 	<body>
 		<h1>CUNY Calendar</h1>
-		<h3>Welcome, {{fname}} {{lname}}</h3>
+		<h3>Welcome, {{fname}} {{lname}}!<br>
+		These are your user settings. Here, you can manually request a calendar update,<br>
+		delete all calendar events created by CUNY Calendar, or de-register your account<br>
+		from this website. If you have entered the wrong CUNY log-in information and you<br>
+		are not getting events generated due to this, you should de-register your account<br>
+		and then re-register it again.</h3><br><br>
+
+		<form method="POST">
+			<input type="hidden" name="sub" value="update">
+			<button type="submit" name="update">Update Calendar</button>
+		</form>
+		<form method="POST">
+			<input type="hidden" name="sub" value="delete">
+			<button type="submit" name="delete">Delete Events</button>
+		</form>
+		<form method="POST">
+			<input type="hidden" name="sub" value="deregister">
+			<button type="submit" name="dereg">Deregister Account</button>
+		</form>
+		<form method="GET", action="/">
+			<button type="submit" name="logout">Log Out</button
+		</form>
 	</body>
 </html>

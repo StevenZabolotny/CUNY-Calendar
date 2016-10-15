@@ -63,22 +63,31 @@ def register():
     cppw = flask.request.form["cppw"]
     cfuser = flask.request.form["cfuser"]
     cfpw = flask.request.form["cfpw"]
-    check = sql.addAccount(creds["id_token"]["email"], cpuser, cppw, cfuser, cfpw)
-    if check:
-        main.updateCalendar(creds["id_token"]["email"], credentials)
+    sql.addAccount(creds["id_token"]["email"], cpuser, cppw, cfuser, cfpw)
     return flask.redirect(flask.url_for("user"))
 
-@app.route("/user")
+@app.route("/user", methods=["GET", "POST"])
 def user():
     credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
     creds = yaml.safe_load(credentials.to_json())
-    uname = sql.getName(creds["id_token"]["email"])
-    fname = uname.split(".")[0]
-    lname = uname.split(".")[1]
-    return flask.render_template("user.html", fname=fname, lname=lname)
+    if flask.request.method == "GET":
+        uname = sql.getName(creds["id_token"]["email"])
+        fname = uname.split(".")[0]
+        lname = uname.split(".")[1]
+        return flask.render_template("user.html", fname=fname.capitalize(), lname=lname.capitalize())
+    else:
+        sub = flask.request.form["sub"]
+        if (sub == "update"):
+            main.updateCalendar(creds["id_token"]["email"], credentials)
+            return flask.redirect(flask.url_for("user"))
+        elif (sub == "delete"):
+            return flask.redirect(flask.url_for("user"))
+        elif (sub == "deregister"):
+            sql.removeAccount(creds["id_token"]["email"])
+            return flask.redirect(flask.url_for("index"))
+        return flask.redirect(flask.url_for("user"))
 
 if __name__ == '__main__':
-    sql.dropTables()
     sql.createNames()
     sql.createAccounts()
     import uuid
