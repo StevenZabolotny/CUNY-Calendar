@@ -1,6 +1,5 @@
 import datetime
 import time
-from CunyFirstScraper import *
 
 def eventPrep(classInfo, dateline):
     spaceloc = classInfo[2].find(' ')
@@ -18,23 +17,48 @@ def eventPrep(classInfo, dateline):
         starttime = timeport[:spaceloc]
         colonloc = starttime.find(':')
         hour = int(starttime[:colonloc])
-        minute = int(starttime[colonloc+1:-2])
+        minute = starttime[colonloc+1:-2]
+        zone = 'standard'
+        if month < 11 or (month == 11 and date < 6):
+            zone = 'day'
         if hour == 12:
             hour -= 12
         if starttime[-2:] == 'PM':
             hour += 12
-        start = {'DateTime': datetime.datetime(year, month, date, hour, minute, 0), 'TimeZone': None}
+        if hour < 10:
+            hour = '0' + str(hour)
+        else:
+            hour = str(hour)
+        if month < 10:
+            month = '0' + str(month)
+        else:
+            month = str(month)
+        if date < 10:
+            date = '0' + str(date)
+        else:
+            date = str(date)
+        if zone == 'day':
+            start = {'dateTime': year+'-'+month+'-'+day+'T'+hour+':'+minute+':00-04:00', 'timeZone': 'Eastern Daylight Time'}
+        else:
+            start = {'dateTime': year+'-'+month+'-'+day+'T'+hour+':'+minute+':00-05:00', 'timeZone': 'Eastern Standard Time'}
         dashloc = timeport.find('-')
         endtime = timeport[dashloc+2:]
         colonloc = endtime.find(':')
         hour = int(endtime[:colonloc])
-        minute = int(endtime[colonloc+1:-2])
+        minute = endtime[colonloc+1:-2]
         if hour == 12:
             hour -= 12
         if endtime[-2:] == 'PM':
             hour += 12
-        end = {'DateTime': datetime.datetime(year, month, date, hour, minute, 0), 'TimeZone': None}
-        event = {'Summary':summary, 'Location':location, 'Start':start, 'End':end}
+        if hour < 10:
+            hour = '0' + str(hour)
+        else:
+            hour = str(hour)
+        if zone == 'day':
+            end = {'dateTime': year+'-'+month+'-'+day+'T'+hour+':'+minute+':00-04:00', 'timeZone': 'Eastern Daylight Time'}
+        else:
+            end = {'dateTime': year+'-'+month+'-'+day+'T'+hour+':'+minute+':00-05:00', 'timeZone': 'Eastern Standard Time'}
+        event = {'summary':summary, 'location':location, 'start':start, 'end':end}
         return event
     else:
         return None
